@@ -1,6 +1,7 @@
 import java.io.File;
 import java.util.*;
 
+
 public class Graph {
     private int vertexCt;  // Number of vertices in the graph.
     private int[][] capacity;  // Adjacency  matrix
@@ -16,7 +17,22 @@ public class Graph {
         source  = 0;
         this.graphName = "";
         makeGraph(fileName);
+    }
 
+    /* 
+     * Methods to test if graph is being created properly
+     */
+
+    public int getVertexCt() {
+        return vertexCt;
+    }
+
+    public int getCappacity(int i, int j) {
+        return capacity[i][j];
+    }
+
+    public int getEdgeCost(int i, int j) {
+        return edgeCost[i][j];
     }
 
     /**
@@ -115,8 +131,9 @@ public class Graph {
             // Add the folder path for simplicity
             fileName = "InputFIles/" + fileName;
 
-            //Graph graph = new Graph(fileName);
-            //graph.minCostMaxFlow();
+            Graph graph = new Graph(fileName);
+            graph.minCostMaxFlow();
+
         }
     }
 }
