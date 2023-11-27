@@ -7,6 +7,7 @@ public class Graph {
     private int[][] capacity;  // Adjacency  matrix
     private int[][] residual; // residual matrix
     private int[][] edgeCost; // cost of edges in the matrix
+    private int[] pred; // predecessor
     private String graphName;  //The file from which the graph was created.
     private int totalFlow; // total achieved flow
     private int source = 0; // start of all paths
@@ -86,9 +87,11 @@ public class Graph {
             System.out.println("\n****Find Flow " + filename);
             Scanner reader = new Scanner(new File(filename));
             vertexCt = reader.nextInt();
+            pred = new int[vertexCt];
             capacity = new int[vertexCt][vertexCt];
             residual = new int[vertexCt][vertexCt];
             edgeCost = new int[vertexCt][vertexCt];
+
 
             // Initialize all matrices to 0
             for (int i = 0; i < vertexCt; i++) {
@@ -118,7 +121,6 @@ public class Graph {
     }
 
     public boolean hasAugmentingPath(int s, int t){
-        int[] pred = new int[vertexCt];
 
         int[] cost = new int[vertexCt];
         for (int i = 0; i < vertexCt; i++){
@@ -128,41 +130,102 @@ public class Graph {
         cost[s] = 0;
 
         for (int i = 0; i < vertexCt; i++) {
-            for (int u = 0; u < vertexCt; u++){
+             for (int u = 0; u < vertexCt; u++){
                 for (int v = 0; v < vertexCt; v++){
                     //since edgcost can be 0, we need to check if the edge exists with capacity which is always greater than 0
                     //when edge is present. then we check if the cost of the edge is less than the cost of the vertex.
-                    if (capacity[u][v] > 0 && (cost[u] + edgeCost[u][v]) < cost[v]){
+                    if (residual[u][v] != 0 && (cost[u] + edgeCost[u][v]) < cost[v]){
                         cost[v] = cost[u] + edgeCost[u][v];
                         pred[v] = u;
+                        
                     }
                 }
+            
+
             }
         }
 
         // Check for negative cycles
         for (int u = 0; u < vertexCt; u++) {
             for (int v = 0; v < vertexCt; v++) {
-                if (capacity[u][v] > 0 && (cost[u] + edgeCost[u][v]) < cost[v]) {
+                if (residual[u][v] != 0 && (cost[u] + edgeCost[u][v]) < cost[v]) {
                     System.out.println("Negative cycle detected. No finite augmenting path exists.");
                     return false;
                 }
             }
         }
-        System.out.println("Cost: " + cost[t]);
-        System.out.println("Pred: " + Arrays.toString(pred));
 
         return !(pred[t] == -1);
     }
- 
+
+    public void fordFulkerson(int s, int t){
+        float value = 0;
+        while(hasAugmentingPath(s, t)){
+            double availFlow = 20_200;
+            int prev;
+            for (int v = t; v != s; v = pred[v]){
+                prev = pred[v];
+                availFlow = Math.min(availFlow, residual[prev][v]);
+            }
+
+            for (int v = t; v != s; v = pred[v]){
+                prev = pred[v];
+                residual[prev][v] -= availFlow;
+                residual[v][prev] += availFlow;
+            }
+
+            
+            value += availFlow;
+        }
+
+        //totalFlow = (int) value;
+    }
+
+    public void findWeightedFlow(){
+        fordFulkerson(source, sink);
+    }
+
+    // private void finalEdgeFlow(){
+    //     totalFlow = 0;
+    //     for (int i =0; i < vertexCt; i++){
+    //         for (int j = 0; j < vertexCt; j++){
+    //             if (residual[j][i] > 0){
+    //                 int flow = edgeCost[i][j];
+    //                 printFlow(i, j, flow);
+    //                 totalFlow += flow;
+    //             }
+    //             //System.out.println("Total Flow: " + totalFlow
+    //         }
+        
+            
+    //     }
+    //     System.out.println("Total Flow: " + totalFlow);
+    // }
+
+    //recursivly find the path
+
+    public void finalEdgeFlow(){
+        for (int j = 0; j < vertexCt; j++){
+            for (int i = 0; i < vertexCt; i++){
+                if (residual[i][j] > 0 && j < i){
+                    System.out.println("Final Edge at " + j + " " + i + " " + edgeCost[j][i]);
+                }
+            //System.out.println("Total Flow: " + totalFlow
+            }
+        }
+    }
+    /* Helper method for prinding the final edge */
+    private void printFlow(int u, int v, int flow) {
+        System.out.println("Flow " + u + "->" + v + " $ " + flow);
+    }
 
 
     public void minCostMaxFlow(){
         System.out.println( printMatrix("Capacity", capacity));
-        //findWeightedFlow();
+        findWeightedFlow();
         System.out.println(printMatrix("Residual", residual));
-        System.out.println("Has Augmenting Path: " + hasAugmentingPath(0, vertexCt-1));
-        //finalEdgeFlow();  
+        System.out.println("pred " + Arrays.toString(pred));
+        finalEdgeFlow();  
     }
 
     public static void main(String[] args) {

@@ -35,4 +35,18 @@ private boolean hasAugmentingCheapestPath(FlowNetwork G, int s, int t) {
 - [X] Implement bellman ford algorythm.
 - [X] test to make sure that it is finding cheepest path
 
+## Part 3: Maximum Match
+
+In the mathematical field of graph theory, a bipartite graph (or bigraph) is a graph whose
+vertices can be divided into two sets such that each edge connects a vertex in each group.
+A matching in a Bipartite Graph is a set of the edges chosen in such a way that no two edges
+share an endpoint. A maximum matching is a matching of maximum size (maximum number
+of edges). There can be more than one maximum matchings for a given Bipartite Graph.
+
+here is what this algoyrthm is trying to solve
+
+1. The most amount of people have a book.
+2. maxamize their happyness with the "cost" function
+
+
 
