@@ -117,18 +117,58 @@ public class Graph {
         System.out.println( printMatrix("Edge Cost" , edgeCost));
     }
 
+    public boolean hasAugmentingPath(int s, int t){
+        int[] pred = new int[vertexCt];
+
+        int[] cost = new int[vertexCt];
+        for (int i = 0; i < vertexCt; i++){
+            pred[i] = -1;
+            cost[i] = 20_000; // code broke when I used Integer.MAX_VALUE
+        }
+        cost[s] = 0;
+
+        for (int i = 0; i < vertexCt; i++) {
+            for (int u = 0; u < vertexCt; u++){
+                for (int v = 0; v < vertexCt; v++){
+                    //since edgcost can be 0, we need to check if the edge exists with capacity which is always greater than 0
+                    //when edge is present. then we check if the cost of the edge is less than the cost of the vertex.
+                    if (capacity[u][v] > 0 && (cost[u] + edgeCost[u][v]) < cost[v]){
+                        cost[v] = cost[u] + edgeCost[u][v];
+                        pred[v] = u;
+                    }
+                }
+            }
+        }
+
+        // Check for negative cycles
+        for (int u = 0; u < vertexCt; u++) {
+            for (int v = 0; v < vertexCt; v++) {
+                if (capacity[u][v] > 0 && (cost[u] + edgeCost[u][v]) < cost[v]) {
+                    System.out.println("Negative cycle detected. No finite augmenting path exists.");
+                    return false;
+                }
+            }
+        }
+        System.out.println("Cost: " + cost[t]);
+        System.out.println("Pred: " + Arrays.toString(pred));
+
+        return !(pred[t] == -1);
+    }
+ 
+
 
     public void minCostMaxFlow(){
         System.out.println( printMatrix("Capacity", capacity));
         //findWeightedFlow();
         System.out.println(printMatrix("Residual", residual));
+        System.out.println("Has Augmenting Path: " + hasAugmentingPath(0, vertexCt-1));
         //finalEdgeFlow();  
     }
 
     public static void main(String[] args) {
-        String[] files = {"match0.txt", "match1.txt",  "match2.txt", "match3.txt", "match4.txt", "match5.txt","match6.txt", "match7.txt", "match8.txt", "match9.txt"};
+        String[] files = {"match0.txt", "match1.txt",  "match2.txt"}; // "match3.txt", "match4.txt", "match5.txt","match6.txt", "match7.txt", "match8.txt", "match9.txt"};
         for (String fileName : files) {
-            // Add the folder path for simplicity
+            //Add the folder path for simplicity
             fileName = "InputFIles/" + fileName;
 
             Graph graph = new Graph(fileName);

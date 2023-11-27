@@ -35,11 +35,37 @@ public class tests {
         assertEquals(graph.getEdgeCost(3, 4), 4);
         assertEquals(graph.getEdgeCost(4, 7), 0);
         assertEquals(graph.getEdgeCost(1, 6), 5);
-
-
-
-
-        
     }
-    
+
+    @Test
+    public void testHasAugmentingPath() {
+        String fileName = "match0.txt";
+      
+        fileName = "InputFIles/" + fileName;
+
+        Graph graph = new Graph(fileName);
+
+        assertEquals(graph.hasAugmentingPath(0, 7), true);
+        assertEquals(graph.hasAugmentingPath(0, 1), true);
+        assertEquals(graph.hasAugmentingPath(0, 2), true);
+
+        assertEquals(graph.hasAugmentingPath(4, 7), true);
+        assertEquals(graph.hasAugmentingPath(1, 6), true);
+
+
+
+    }
+
+    @Test
+    public void testFails() {
+        String fileName = "match0.txt";
+      
+        fileName = "InputFIles/" + fileName;
+
+        Graph graph = new Graph(fileName);
+
+        assertEquals(false, graph.hasAugmentingPath(3, 6));
+        assertEquals(false, graph.hasAugmentingPath(3, 5));  
+
+    }
 }

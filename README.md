@@ -32,7 +32,7 @@ private boolean hasAugmentingCheapestPath(FlowNetwork G, int s, int t) {
 }
 ```
 
-- [ ] Implement bellman ford algorythm.
-- [ ] test to make sure that it is finding cheepest path
+- [X] Implement bellman ford algorythm.
+- [X] test to make sure that it is finding cheepest path
 
 
